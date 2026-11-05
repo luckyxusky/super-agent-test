@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✦ Starlight Memo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-dark: #0a0a1a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0c0;
+            --accent-1: #7b5ea7;
+            --accent-2: #e056a8;
+            --accent-3: #56b4f7;
+            --glow-1: rgba(123, 94, 167, 0.6);
+            --glow-2: rgba(224, 86, 168, 0.5);
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+        
+        /* Animated starfield background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(ellipse at bottom, #1a1a3a 0%, #0a0a1a 100%);
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--min-opacity); transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+        
+        /* Shooting stars */
+        .shooting-star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: linear-gradient(90deg, white, transparent);
+            border-radius: 50%;
+            animation: shoot linear infinite;
+            opacity: 0;
+        }
+        
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+        }
+        
+        @keyframes shoot {
+            0% { transform: translate(0, 0) rotate(-45deg); opacity: 0; }
+            10% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translate(-300px, 300px) rotate(-45deg); opacity: 0; }
+        }
+        
+        /* Floating nebula effects */
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .nebula-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-1);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .nebula-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-2);
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -7s;
+        }
+        
+        .nebula-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-3);
+            top: 40%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent-3), var(--accent-2), var(--accent-1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px var(--glow-2);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 3px;
+        }
+        
+        /* Input area */
+        .input-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .input-section:focus-within {
+            border-color: var(--accent-2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        0 0 30px var(--glow-2);
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            resize: none;
+            min-height: 120px;
+            outline: none;
+        }
+        
+        textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 15px 30px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px var(--glow-1);
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--glow-2);
+        }
+        
+        .btn-save:active {
+            transform: translateY(0);
+        }
+        
+        /* Memo cards */
+        .memo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .memo-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .memo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            opacity: 0.7;
+        }
+        
+        .memo-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .memo-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+        
+        .memo-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .memo-time {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .memo-time::before {
+            content: '✦';
+            color: var(--accent-3);
+        }
+        
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        
+        .btn-delete:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state .star-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+            
+            .input-wrapper {
+                flex-direction: column;
+            }
+            
+            .btn-save {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background effects -->
+    <div class="starfield" id="starfield"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+    
+    <!-- Main content -->
+    <div class="container">
+        <header class="header">
+            <h1>✦ Starlight Memo ✦</h1>
+            <p>Capture your thoughts among the stars</p>
+        </header>
+        
+        <section class="input-section">
+            <div class="input-wrapper">
+                <textarea 
+                    id="memoInput" 
+                    placeholder="Write something under the starlight..."
+                    rows="4"
+                ></textarea>
+                <button class="btn-save" onclick="saveMemo()">
+                    ✦ Save
+                </button>
+            </div>
+        </section>
+        
+        <main class="memo-list" id="memoList"></main>
+    </div>
+    
+    <script>
+        // Generate stars
+        function createStars() {
+            const starfield = document.getElementById('starfield');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const size = Math.random() * 3 + 1;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 5;
+                const minOpacity = Math.random() * 0.3 + 0.1;
+                
+                star.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}%;
+                    top: ${y}%;
+                    --duration: ${duration}s;
+                    --min-opacity: ${minOpacity};
+                    animation-delay: ${delay}s;
+                `;
+                
+                starfield.appendChild(star);
+            }
+            
+            // Add shooting stars
+            for (let i = 0; i < 3; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                shootingStar.style.cssText = `
+                    top: ${Math.random() * 50}%;
+                    right: ${Math.random() * 30}%;
+                    animation-duration: ${Math.random() * 2 + 1}s;
+                    animation-delay: ${Math.random() * 10}s;
+                `;
+                starfield.appendChild(shootingStar);
+            }
+        }
+        
+        // Load memos from localStorage
+        function loadMemos() {
+            const memos = JSON.parse(localStorage.getItem('starlightMemos') || '[]');
+            return memos.sort((a, b) => b.timestamp - a.timestamp);
+        }
+        
+        // Save memo
+        function saveMemo() {
+            const input = document.getElementById('memoInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                input.style.animation = 'shake 0.5s ease';
+                setTimeout(() => input.style.animation = '', 500);
+                return;
+            }
+            
+            const memos = loadMemos();
+            const newMemo = {
+                id: Date.now(),
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            memos.unshift(newMemo);
+            localStorage.setItem('starlightMemos', JSON.stringify(memos));
+            
+            input.value = '';
+            renderMemos();
+        }
+        
+        // Delete memo
+        function deleteMemo(id) {
+            let memos = loadMemos();
+            memos = memos.filter(m => m.id !== id);
+            localStorage.setItem('starlightMemos', JSON.stringify(memos));
+            renderMemos();
+        }
+        
+        // Format timestamp
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        // Render memos
+        function renderMemos() {
+            const memoList = document.getElementById('memoList');
+            const memos = loadMemos();
+            
+            if (memos.length === 0) {
+                memoList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="star-icon">✦</div>
+                        <p>No memories among the stars yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            memoList.innerHTML = memos.map((memo, index) => `
+                <div class="memo-card" style="animation-delay: ${index * 0.1}s">
+                    <div class="memo-content">${escapeHtml(memo.text)}</div>
+                    <div class="memo-meta">
+                        <span class="memo-time">${formatTime(memo.timestamp)}</span>
+                        <button class="btn-delete" onclick="deleteMemo(${memo.id})">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
+        }
+        
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Handle Enter key
+        document.getElementById('memoInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                saveMemo();
+            }
+        });
+        
+        // Initialize
+        createStars();
+        renderMemos();
+    </script>
+</body>
+</html>
